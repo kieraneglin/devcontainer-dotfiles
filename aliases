@@ -1,0 +1,41 @@
+# Custom aliases for devcontainers
+# Add your personal aliases here
+
+# Git aliases
+alias gs="git status"
+alias ga="git add"
+alias gm="git commit -m"
+alias gp="git push"
+alias gpu="git pull"
+alias gl="git log --oneline"
+alias gd="git diff"
+alias gb="git branch"
+alias gc="git checkout"
+
+# Docker aliases
+alias d="docker"
+alias dc="docker compose"
+alias dps="docker ps"
+alias di="docker images"
+
+# General aliases
+alias ll="ls -alF"
+alias la="ls -A"
+alias l="ls -CF"
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias ~="cd ~"
+
+# Utility aliases
+alias grep="grep --color=auto"
+alias fgrep="fgrep --color=auto"
+alias egrep="egrep --color=auto"
+alias h="history"
+alias c="clear"
+alias e="$EDITOR"
+
+# Add your custom aliases below this line
+# Example:
+# alias myproject="cd /workspaces/my-project"
+# alias serve="python -m http.server 8000"
