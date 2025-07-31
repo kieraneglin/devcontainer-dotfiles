@@ -71,8 +71,29 @@ ln -sf "$ZSH_CUSTOM/themes/pure/async.zsh" "$ZSH_CUSTOM/themes/async.zsh-theme"
 
 # Copy dotfiles
 echo "📋 Setting up configuration files..."
-cp "$DOTFILES_DIR/zshrc" "$HOME/.zshrc"
-cp "$DOTFILES_DIR/aliases" "$HOME/.aliases"
+
+# Check if we're running from a local clone or need to download files
+if [ -f "$DOTFILES_DIR/zshrc" ] && [ -f "$DOTFILES_DIR/aliases" ]; then
+    # Local installation - copy files directly
+    cp "$DOTFILES_DIR/zshrc" "$HOME/.zshrc"
+    cp "$DOTFILES_DIR/aliases" "$HOME/.aliases"
+else
+    # Remote installation - download files from GitHub
+    echo "📥 Downloading configuration files from GitHub..."
+    REPO_URL="https://raw.githubusercontent.com/kieraneglin/devcontainer-dotfiles/master"
+    
+    if command -v curl &> /dev/null; then
+        curl -fsSL "$REPO_URL/zshrc" -o "$HOME/.zshrc"
+        curl -fsSL "$REPO_URL/aliases" -o "$HOME/.aliases"
+    elif command -v wget &> /dev/null; then
+        wget -q "$REPO_URL/zshrc" -O "$HOME/.zshrc"
+        wget -q "$REPO_URL/aliases" -O "$HOME/.aliases"
+    else
+        echo "❌ Neither curl nor wget found. Cannot download configuration files."
+        echo "💡 Please install curl or wget, or run this script from a local clone of the repository."
+        exit 1
+    fi
+fi
 
 # Handle additional plugins if specified
 if [ ! -z "$ADDITIONAL_ZSH_PLUGINS" ]; then
