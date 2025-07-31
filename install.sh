@@ -65,6 +65,12 @@ if [ ! -d "$ZSH_CUSTOM/themes/pure" ]; then
     git clone https://github.com/sindresorhus/pure.git "$ZSH_CUSTOM/themes/pure"
 fi
 
+# Install zsh-syntax-highlighting
+echo "🎨 Installing zsh-syntax-highlighting..."
+if [ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+fi
+
 # Create symlinks for Pure theme files
 ln -sf "$ZSH_CUSTOM/themes/pure/pure.zsh-theme" "$ZSH_CUSTOM/themes/pure.zsh-theme"
 ln -sf "$ZSH_CUSTOM/themes/pure/async.zsh" "$ZSH_CUSTOM/themes/async.zsh-theme"

@@ -16,6 +16,7 @@ DEFAULT_PLUGINS=(
     colored-man-pages
     command-not-found
     z
+    zsh-syntax-highlighting
 )
 
 # Load additional plugins if specified
@@ -37,6 +38,29 @@ source $ZSH/oh-my-zsh.sh
 # Initialize Pure Prompt
 fpath+=("$ZSH/custom/themes/pure")
 autoload -U promptinit; promptinit
+
+# Pure prompt customization for better visuals
+zstyle ':prompt:pure:prompt:success' color green
+zstyle ':prompt:pure:prompt:error' color red
+zstyle ':prompt:pure:prompt:continuation' color yellow
+zstyle ':prompt:pure:path' color blue
+zstyle ':prompt:pure:git:branch' color magenta
+zstyle ':prompt:pure:git:action' color yellow
+zstyle ':prompt:pure:git:dirty' color red
+zstyle ':prompt:pure:host' color cyan
+zstyle ':prompt:pure:user' color default
+zstyle ':prompt:pure:user:root' color red
+zstyle ':prompt:pure:virtualenv' color yellow
+zstyle ':prompt:pure:execution_time' color yellow
+
+# Show username@hostname when in SSH or container
+zstyle ':prompt:pure:user' show yes
+zstyle ':prompt:pure:host' show yes
+
+# Show execution time for commands longer than 5 seconds
+zstyle ':prompt:pure:execution_time' show yes
+zstyle ':prompt:pure:execution_time:min' 5
+
 prompt pure
 
 # Load custom aliases
