@@ -21,7 +21,9 @@ if ! command -v zsh &> /dev/null; then
     fi
     
     if command -v apt-get &> /dev/null; then
-        $SUDO_CMD apt-get update && $SUDO_CMD apt-get install -y zsh
+        # Set non-interactive mode and use package maintainer's version for any conflicts
+        export DEBIAN_FRONTEND=noninteractive
+        $SUDO_CMD apt-get update && $SUDO_CMD apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" zsh
     elif command -v yum &> /dev/null; then
         $SUDO_CMD yum install -y zsh
     elif command -v apk &> /dev/null; then
