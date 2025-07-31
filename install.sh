@@ -13,12 +13,19 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Install Zsh if not already installed
 if ! command -v zsh &> /dev/null; then
     echo "📦 Installing Zsh..."
+    
+    # Check if we need sudo or if we're already root
+    SUDO_CMD=""
+    if [ "$EUID" -ne 0 ] && command -v sudo &> /dev/null; then
+        SUDO_CMD="sudo"
+    fi
+    
     if command -v apt-get &> /dev/null; then
-        sudo apt-get update && sudo apt-get install -y zsh
+        $SUDO_CMD apt-get update && $SUDO_CMD apt-get install -y zsh
     elif command -v yum &> /dev/null; then
-        sudo yum install -y zsh
+        $SUDO_CMD yum install -y zsh
     elif command -v apk &> /dev/null; then
-        sudo apk add zsh
+        $SUDO_CMD apk add zsh
     else
         echo "❌ Could not install Zsh. Please install it manually."
         exit 1
@@ -28,7 +35,19 @@ fi
 # Change default shell to Zsh
 echo "🐚 Setting Zsh as default shell..."
 if [ "$SHELL" != "$(which zsh)" ]; then
-    sudo chsh -s "$(which zsh)" "$USER" || echo "⚠️  Could not change default shell. You may need to restart your terminal."
+    # Check if we need sudo or if we're already root
+    SUDO_CMD=""
+    if [ "$EUID" -ne 0 ] && command -v sudo &> /dev/null; then
+        SUDO_CMD="sudo"
+    fi
+    
+    # Try to change the shell, but don't fail if it doesn't work (common in containers)
+    if command -v chsh &> /dev/null; then
+        $SUDO_CMD chsh -s "$(which zsh)" "$USER" 2>/dev/null || echo "⚠️  Could not change default shell. You may need to restart your terminal."
+    else
+        echo "⚠️  chsh not available. Setting SHELL environment variable instead."
+        export SHELL="$(which zsh)"
+    fi
 fi
 
 # Install Oh My Zsh if not already installed
@@ -56,14 +75,24 @@ cp "$DOTFILES_DIR/aliases" "$HOME/.aliases"
 # Handle additional plugins if specified
 if [ ! -z "$ADDITIONAL_ZSH_PLUGINS" ]; then
     echo "🔌 Adding additional Zsh plugins: $ADDITIONAL_ZSH_PLUGINS"
-    # Create a temporary file with the additional plugins
+    # Create a file with the additional plugins
     echo "$ADDITIONAL_ZSH_PLUGINS" > "$HOME/.additional_zsh_plugins"
+fi
+
+# Ensure Zsh is available before proceeding
+if ! command -v zsh &> /dev/null; then
+    echo "❌ Zsh installation failed. Cannot continue."
+    exit 1
 fi
 
 # Source the new configuration
 echo "🔄 Applying configuration..."
 export SHELL="$(which zsh)"
-exec zsh -l
 
-echo "✅ Dotfiles setup complete!"
-echo "💡 You may need to restart your terminal or run 'exec zsh' to see all changes."
+# Don't use exec in non-interactive mode, just notify user
+if [ -t 0 ]; then
+    exec zsh -l
+else
+    echo "✅ Dotfiles setup complete!"
+    echo "💡 Run 'exec zsh' or restart your terminal to see all changes."
+fi
